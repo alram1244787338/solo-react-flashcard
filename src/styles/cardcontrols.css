@@ -1,0 +1,96 @@
+.cardControls {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cardControls__navRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardControls__navBtn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background-color: #ffffff;
+  color: #4b5563;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardControls__navBtn:hover {
+  background-color: #f3f4f6;
+  transform: scale(1.05);
+}
+
+.cardControls__navBtn:active {
+  transform: scale(0.95);
+}
+
+.cardControls__navBtn--prev:hover {
+  color: #6366f1;
+}
+
+.cardControls__navBtn--next:hover {
+  color: #6366f1;
+}
+
+.cardControls__counter {
+  font-size: 15px;
+  font-weight: 600;
+  color: #6b7280;
+  font-variant-numeric: tabular-nums;
+}
+
+.cardControls__actionRow {
+  display: flex;
+  gap: 12px;
+}
+
+.cardControls__actionBtn {
+  flex: 1;
+  padding: 14px 20px;
+  border-radius: 10px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cardControls__actionBtn--forget {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.cardControls__actionBtn--forget:hover {
+  background-color: #fecaca;
+  transform: translateY(-1px);
+}
+
+.cardControls__actionBtn--forget:active {
+  transform: translateY(0);
+}
+
+.cardControls__actionBtn--remember {
+  background-color: #d1fae5;
+  color: #059669;
+}
+
+.cardControls__actionBtn--remember:hover {
+  background-color: #a7f3d0;
+  transform: translateY(-1px);
+}
+
+.cardControls__actionBtn--remember:active {
+  transform: translateY(0);
+}
