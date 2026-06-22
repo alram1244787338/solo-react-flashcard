@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import FlashCard from './components/FlashCard';
 import ProgressBar from './components/ProgressBar';
 import CardControls from './components/CardControls';
+import createKeyHandler from './utils/keyboard';
 import words from './data/words';
 import './styles/app.css';
 
@@ -80,40 +81,24 @@ function App() {
     setCardKey(0);
   }, []);
 
+  const handleFlip = useCallback(() => {
+    if (flashCardRef.current) {
+      flashCardRef.current.click();
+    }
+  }, []);
+
   const handleKeyDown = useCallback(
     (e) => {
       if (finished) return;
-
-      switch (e.key) {
-        case 'Enter':
-          e.preventDefault();
-          if (flashCardRef.current) {
-            flashCardRef.current.click();
-          }
-          break;
-        case 'ArrowLeft':
-          e.preventDefault();
-          handlePrev();
-          break;
-        case 'ArrowRight':
-          e.preventDefault();
-          handleNext();
-          break;
-        case 'r':
-        case 'R':
-          e.preventDefault();
-          handleRemember();
-          break;
-        case 'f':
-        case 'F':
-          e.preventDefault();
-          handleForget();
-          break;
-        default:
-          break;
-      }
+      createKeyHandler({
+        onFlip: handleFlip,
+        onPrev: handlePrev,
+        onNext: handleNext,
+        onRemember: handleRemember,
+        onForget: handleForget,
+      })(e);
     },
-    [finished, handlePrev, handleNext, handleRemember, handleForget]
+    [finished, handleFlip, handlePrev, handleNext, handleRemember, handleForget]
   );
 
   useEffect(() => {
