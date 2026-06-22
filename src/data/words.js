@@ -24,6 +24,20 @@ const words = [
   { en: 'advantage', zh: 'n. 优势，有利条件' },
   { en: 'adventure', zh: 'n. 冒险，奇遇' },
   { en: 'advocate', zh: 'v. 提倡；n. 拥护者' },
+  { en: 'balance', zh: 'n./v. 平衡，均衡' },
+  { en: 'calculate', zh: 'v. 计算，估计' },
+  { en: 'candidate', zh: 'n. 候选人，申请者' },
+  { en: 'decade', zh: 'n. 十年，十年期' },
+  { en: 'demonstrate', zh: 'v. 证明，展示' },
 ];
 
-export default words;
+function shuffle(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+export default shuffle(words);

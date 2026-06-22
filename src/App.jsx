@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import FlashCard from './components/FlashCard';
 import ProgressBar from './components/ProgressBar';
 import CardControls from './components/CardControls';
@@ -11,56 +11,115 @@ function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [rememberedCount, setRememberedCount] = useState(0);
   const [finished, setFinished] = useState(false);
+  const [cardKey, setCardKey] = useState(0);
 
+  const flashCardRef = useRef(null);
   const currentWord = queue[currentIndex];
+
+  const refreshCardKey = useCallback(() => {
+    setCardKey((prev) => prev + 1);
+  }, []);
 
   const handlePrev = useCallback(() => {
     if (queue.length === 0) return;
     setCurrentIndex((prev) => (prev - 1 + queue.length) % queue.length);
-  }, [queue.length]);
+    refreshCardKey();
+  }, [queue.length, refreshCardKey]);
 
   const handleNext = useCallback(() => {
     if (queue.length === 0) return;
     setCurrentIndex((prev) => (prev + 1) % queue.length);
-  }, [queue.length]);
+    refreshCardKey();
+  }, [queue.length, refreshCardKey]);
 
   const handleRemember = useCallback(() => {
-    if (queue.length === 0) return;
-    const newQueue = queue.filter((_, i) => i !== currentIndex);
-    const newRemembered = rememberedCount + 1;
+    const indexToRemove = currentIndex;
 
-    setQueue(newQueue);
-    setRememberedCount(newRemembered);
+    setQueue((prevQueue) => {
+      if (prevQueue.length === 0) return prevQueue;
+      const newQueue = prevQueue.filter((_, i) => i !== indexToRemove);
 
-    if (newQueue.length === 0) {
-      setFinished(true);
-      return;
-    }
+      if (newQueue.length === 0) {
+        setFinished(true);
+      } else if (indexToRemove >= newQueue.length) {
+        setCurrentIndex(0);
+      }
 
-    if (currentIndex >= newQueue.length) {
-      setCurrentIndex(0);
-    }
-  }, [queue, currentIndex, rememberedCount]);
+      return newQueue;
+    });
+
+    setRememberedCount((prev) => prev + 1);
+    refreshCardKey();
+  }, [currentIndex, refreshCardKey]);
 
   const handleForget = useCallback(() => {
-    if (queue.length === 0) return;
-    const current = queue[currentIndex];
-    const newQueue = queue.filter((_, i) => i !== currentIndex);
-    newQueue.push(current);
+    const indexToMove = currentIndex;
 
-    setQueue(newQueue);
+    setQueue((prevQueue) => {
+      if (prevQueue.length === 0) return prevQueue;
 
-    if (currentIndex >= newQueue.length) {
-      setCurrentIndex(0);
-    }
-  }, [queue, currentIndex]);
+      const current = prevQueue[indexToMove];
+      const newQueue = prevQueue.filter((_, i) => i !== indexToMove);
+      newQueue.push(current);
+
+      if (indexToMove >= newQueue.length) {
+        setCurrentIndex(0);
+      }
+
+      return newQueue;
+    });
+
+    refreshCardKey();
+  }, [currentIndex, refreshCardKey]);
 
   const handleRestart = useCallback(() => {
     setQueue([...words]);
     setCurrentIndex(0);
     setRememberedCount(0);
     setFinished(false);
+    setCardKey(0);
   }, []);
+
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (finished) return;
+
+      switch (e.key) {
+        case 'Enter':
+          e.preventDefault();
+          if (flashCardRef.current) {
+            flashCardRef.current.click();
+          }
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          handlePrev();
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          handleNext();
+          break;
+        case 'r':
+        case 'R':
+          e.preventDefault();
+          handleRemember();
+          break;
+        case 'f':
+        case 'F':
+          e.preventDefault();
+          handleForget();
+          break;
+        default:
+          break;
+      }
+    },
+    [finished, handlePrev, handleNext, handleRemember, handleForget]
+  );
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
 
   return (
     <div className="app">
@@ -69,7 +128,7 @@ function App() {
         <ProgressBar remembered={rememberedCount} total={totalCount} />
       </header>
 
-      <main className="app__main">
+      <main className="app__main" tabIndex={0}>
         {finished ? (
           <div className="app__finishedCard">
             <div className="app__finishedIcon">🎉</div>
@@ -84,7 +143,9 @@ function App() {
         ) : (
           <>
             {currentWord && (
-              <FlashCard key={currentWord.en + currentIndex} word={currentWord} />
+              <div ref={flashCardRef}>
+                <FlashCard key={`${currentWord.en}-${cardKey}`} word={currentWord} />
+              </div>
             )}
             <CardControls
               currentIndex={currentIndex}
@@ -96,6 +157,9 @@ function App() {
             />
             <p className="app__tip">
               剩余 {queue.length} 张卡片待复习 · 点击卡片翻转查看释义
+            </p>
+            <p className="app__shortcutHint">
+              快捷键：Enter 翻转 · ←→ 翻页 · R 记住了 · F 没记住
             </p>
           </>
         )}

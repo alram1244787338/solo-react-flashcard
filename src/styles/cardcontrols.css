@@ -29,11 +29,13 @@
 
 .cardControls__navBtn:hover {
   background-color: #f3f4f6;
-  transform: scale(1.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .cardControls__navBtn:active {
-  transform: scale(0.95);
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .cardControls__navBtn--prev:hover {
@@ -74,11 +76,13 @@
 
 .cardControls__actionBtn--forget:hover {
   background-color: #fecaca;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
 }
 
 .cardControls__actionBtn--forget:active {
   transform: translateY(0);
+  box-shadow: none;
 }
 
 .cardControls__actionBtn--remember {
@@ -88,9 +92,11 @@
 
 .cardControls__actionBtn--remember:hover {
   background-color: #a7f3d0;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
 }
 
 .cardControls__actionBtn--remember:active {
   transform: translateY(0);
+  box-shadow: none;
 }
